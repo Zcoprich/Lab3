@@ -20,6 +20,7 @@ public class MainActivity extends AppCompatActivity {
     private String operator = "";
     private int num1;
     private int num2;
+    private boolean calculating = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -45,18 +46,36 @@ public class MainActivity extends AppCompatActivity {
 
         TextView output = (TextView) findViewById(R.id.output);
         String buttonText = ((Button) v).getText().toString();
+        String temp;
 
         switch (buttonText) {
 
             case "\u221A":
+
                 left_side = buttonText;
                 break;
+
             case "C":
-                left_side = "0";
+
+                right_side = "0";
+                left_side = "";
+                operator = "";
                 break;
+
             case "+" :
-                left_side = buttonText;
+
+                if(operator != "") {
+                    left_side = calculate(left_side, right_side, operator);
+                    operator = "+";
+                }
+                else{
+                    left_side = right_side;
+                    right_side = "";
+                    operator = "+";
+                }
+
                 break;
+
             case "%" :
                 left_side = buttonText;
                 break;
@@ -75,19 +94,48 @@ public class MainActivity extends AppCompatActivity {
             case "\\":
                 left_side = buttonText;
                 break;
+
             case "=" :
-                left_side = buttonText;
+
+                temp = calculate(left_side, right_side, operator);
+                left_side = right_side;
+                right_side = temp;
+                break;
+
+            default:
+                if(right_side == "0")
+                    right_side = buttonText;
+                else
+                    right_side += buttonText;
+
+        }
+        if(calculating)
+            output.setText(left_side);
+        else
+            output.setText(right_side);
+
+    }
+
+    public String calculate (String left, String right, String operand){
+
+        num1 = Integer.parseInt(left);
+        num2 = Integer.parseInt(right);
+        int cal;
+        String result;
+        calculating = true;
+
+        switch (operand){
+
+            case "+":
+                cal = num1 + num2;
+                result = String.valueOf(cal);
                 break;
             default:
-                if(left_side == "0")
-                    left_side = buttonText;
-                else
-                    left_side += buttonText;
+                result = "Not avaliable!";
 
         }
 
-        output.setText(left_side);
-
+        return result;
     }
 
     @Override
