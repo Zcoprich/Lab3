@@ -11,8 +11,15 @@ import androidx.appcompat.widget.Toolbar;
 import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.*;
 
 public class MainActivity extends AppCompatActivity {
+
+    private String right_side = "";
+    private String left_side = "";
+    private String operator = "";
+    private int num1;
+    private int num2;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -29,6 +36,58 @@ public class MainActivity extends AppCompatActivity {
                         .setAction("Action", null).show();
             }
         });
+
+        TextView output = (TextView) findViewById(R.id.output);
+        output.setText("0");
+    }
+
+    public void buttonClicked(View v) {
+
+        TextView output = (TextView) findViewById(R.id.output);
+        String buttonText = ((Button) v).getText().toString();
+
+        switch (buttonText) {
+
+            case "\u221A":
+                left_side = buttonText;
+                break;
+            case "C":
+                left_side = "0";
+                break;
+            case "+" :
+                left_side = buttonText;
+                break;
+            case "%" :
+                left_side = buttonText;
+                break;
+            case "\u00D7":
+                left_side = buttonText;
+                break;
+            case "-" :
+                left_side = buttonText;
+                break;
+            case "\u00B1":
+                left_side = buttonText;
+                break;
+            case "." :
+                left_side = buttonText;
+                break;
+            case "\\":
+                left_side = buttonText;
+                break;
+            case "=" :
+                left_side = buttonText;
+                break;
+            default:
+                if(left_side == "0")
+                    left_side = buttonText;
+                else
+                    left_side += buttonText;
+
+        }
+
+        output.setText(left_side);
+
     }
 
     @Override
