@@ -15,12 +15,13 @@ import android.widget.*;
 
 public class MainActivity extends AppCompatActivity {
 
-    private String right_side = "";
-    private String left_side = "";
-    private String operator = "";
-    private int num1;
-    private int num2;
-    private boolean calculating = false;
+    private String right_side = ""; // right side of operator
+    private String left_side = ""; // left side of operator
+    private String operator = ""; // math operation to perform
+    private String calculation = ""; // result of performing the operation
+    private String last_input = ""; // previous input from user
+    private int num1; // holds left_side number form
+    private int num2; // hold right_side number form
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -57,21 +58,23 @@ public class MainActivity extends AppCompatActivity {
 
             case "C":
 
-                right_side = "0";
+                right_side = "";
                 left_side = "";
                 operator = "";
                 break;
 
             case "+" :
 
-                if(operator != "") {
-                    left_side = calculate(left_side, right_side, operator);
+                if (operator == ""){
                     operator = "+";
-                }
-                else{
                     left_side = right_side;
-                    right_side = "";
+
+                }
+                else
+                {
+                    calculation = calculate(left_side, right_side, operator);
                     operator = "+";
+                    left_side = calculation;
                 }
 
                 break;
@@ -85,34 +88,46 @@ public class MainActivity extends AppCompatActivity {
             case "-" :
                 left_side = buttonText;
                 break;
+
             case "\u00B1":
-                left_side = buttonText;
+                int right = Integer.parseInt(right_side);
+                right = -right;
+                right_side = String.valueOf(right);
                 break;
+
             case "." :
                 left_side = buttonText;
                 break;
-            case "\\":
+
+            case "/":
                 left_side = buttonText;
                 break;
 
             case "=" :
+                if(right_side == "" && operator != "")
+                {
+                    right_side = left_side;
+                    calculation = calculate(left_side, right_side, operator);
+                    left_side = calculation;
+                }
+                else{
+                    calculation = calculate(left_side, right_side, operator);
+                    left_side = calculation;
+                }
 
-                temp = calculate(left_side, right_side, operator);
-                left_side = right_side;
-                right_side = temp;
                 break;
 
             default:
-                if(right_side == "0")
+                if(right_side == "0" || last_input.equals(operator))
                     right_side = buttonText;
                 else
                     right_side += buttonText;
 
         }
-        if(calculating)
-            output.setText(left_side);
-        else
-            output.setText(right_side);
+
+        output.setText(calculation);
+
+        last_input = buttonText;
 
     }
 
@@ -122,12 +137,23 @@ public class MainActivity extends AppCompatActivity {
         num2 = Integer.parseInt(right);
         int cal;
         String result;
-        calculating = true;
 
         switch (operand){
 
             case "+":
                 cal = num1 + num2;
+                result = String.valueOf(cal);
+                break;
+            case "-":
+                cal = num1 - num2;
+                result = String.valueOf(cal);
+                break;
+            case "\\u00D7":
+                cal = num1 * num2;
+                result = String.valueOf(cal);
+                break;
+            case "\\":
+                cal = num1 / num2;
                 result = String.valueOf(cal);
                 break;
             default:
