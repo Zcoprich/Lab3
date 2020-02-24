@@ -20,8 +20,12 @@ public class MainActivity extends AppCompatActivity {
     private String operator = ""; // math operation to perform
     private String calculation = ""; // result of performing the operation
     private String last_input = ""; // previous input from user
+
     private int num1; // holds left_side number form
     private int num2; // hold right_side number form
+
+    private boolean equal_used = false; // determine if last input was equal
+    private boolean math_in_progress = false; // determine if calculations are being done
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -47,7 +51,6 @@ public class MainActivity extends AppCompatActivity {
 
         TextView output = (TextView) findViewById(R.id.output);
         String buttonText = ((Button) v).getText().toString();
-        String temp;
 
         switch (buttonText) {
 
@@ -70,6 +73,13 @@ public class MainActivity extends AppCompatActivity {
                     left_side = right_side;
 
                 }
+                else if(equal_used){
+
+                    operator = "+";
+                    left_side = calculation;
+                    right_side = "";
+
+                }
                 else
                 {
                     calculation = calculate(left_side, right_side, operator);
@@ -77,16 +87,61 @@ public class MainActivity extends AppCompatActivity {
                     left_side = calculation;
                 }
 
+                equal_used = false;
+
                 break;
 
             case "%" :
                 left_side = buttonText;
                 break;
+
             case "\u00D7":
-                left_side = buttonText;
+
+                if (operator == ""){
+                    operator = "\u00D7";
+                    left_side = right_side;
+
+                }
+                else if(equal_used){
+
+                    operator = "\u00D7";
+                    left_side = calculation;
+                    right_side = "";
+
+                }
+                else
+                {
+                    calculation = calculate(left_side, right_side, operator);
+                    operator = "\u00D7";
+                    left_side = calculation;
+                }
+
+                equal_used = false;
+
                 break;
+
             case "-" :
-                left_side = buttonText;
+                if (operator == ""){
+                    operator = "-";
+                    left_side = right_side;
+
+                }
+                else if(equal_used){
+
+                    operator = "-";
+                    left_side = calculation;
+                    right_side = "";
+
+                }
+                else
+                {
+                    calculation = calculate(left_side, right_side, operator);
+                    operator = "-";
+                    left_side = calculation;
+                }
+
+                equal_used = false;
+
                 break;
 
             case "\u00B1":
@@ -115,6 +170,8 @@ public class MainActivity extends AppCompatActivity {
                     left_side = calculation;
                 }
 
+                equal_used = true;
+
                 break;
 
             default:
@@ -124,6 +181,11 @@ public class MainActivity extends AppCompatActivity {
                     right_side += buttonText;
 
         }
+
+        if(left_side == "" && right_side == "")
+            output.setText("0");
+        else if(last_input.equals(operator))
+            output.setText(calculation);
 
         output.setText(calculation);
 
@@ -148,7 +210,7 @@ public class MainActivity extends AppCompatActivity {
                 cal = num1 - num2;
                 result = String.valueOf(cal);
                 break;
-            case "\\u00D7":
+            case "\u00D7":
                 cal = num1 * num2;
                 result = String.valueOf(cal);
                 break;
