@@ -1,5 +1,6 @@
 package com.example.cs408lab3;
 
+import android.bluetooth.BluetoothGatt;
 import android.os.Bundle;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
@@ -13,6 +14,8 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.*;
 
+import java.math.BigDecimal;
+
 public class MainActivity extends AppCompatActivity {
 
     private String right_side = ""; // right side of operator
@@ -21,8 +24,8 @@ public class MainActivity extends AppCompatActivity {
     private String last_input = ""; // previous input from user
     private String currentNumber; // number to appeear on screen
 
-    private int num1; // holds left_side number form
-    private int num2; // hold right_side number form
+    private BigDecimal num1; // holds left_side number form
+    private BigDecimal num2; // hold right_side number form
 
     private boolean equal_used = false; // determine if last input was equal
     private boolean decimal_added = false; // determine if decimal has been added
@@ -52,6 +55,7 @@ public class MainActivity extends AppCompatActivity {
         TextView output = (TextView) findViewById(R.id.output);
         String buttonText = ((Button) v).getText().toString();
 
+
         switch (buttonText) {
 
             case "\u221A":
@@ -71,12 +75,14 @@ public class MainActivity extends AppCompatActivity {
                     left_side = right_side;
 
 
-                else if(!equal_used || operator != "")
+                else if(!equal_used && operator != "")
                     left_side = calculate(left_side, right_side, operator);
 
                 operator = "+";
                 right_side = "";
                 currentNumber = left_side;
+
+                equal_used = false;
 
                 break;
 
@@ -86,12 +92,14 @@ public class MainActivity extends AppCompatActivity {
                     left_side = right_side;
 
 
-                else if(!equal_used || operator != "")
+                else if(!equal_used && operator != "")
                     left_side = calculate(left_side, right_side, operator);
 
                 operator = "%";
                 right_side = "";
                 currentNumber = left_side;
+
+                equal_used = false;
                 break;
 
             case "\u00D7":
@@ -100,12 +108,14 @@ public class MainActivity extends AppCompatActivity {
                     left_side = right_side;
 
 
-                else if(!equal_used || operator != "")
+                else if(!equal_used && operator != "")
                     left_side = calculate(left_side, right_side, operator);
 
                 operator = "\u00D7";
                 right_side = "";
                 currentNumber = left_side;
+
+                equal_used = false;
 
                 break;
 
@@ -115,12 +125,14 @@ public class MainActivity extends AppCompatActivity {
                     left_side = right_side;
 
 
-                else if(!equal_used || operator != "")
+                else if(!equal_used && operator != "")
                     left_side = calculate(left_side, right_side, operator);
 
                 operator = "-";
                 right_side = "";
                 currentNumber = left_side;
+
+                equal_used = false;
 
                 break;
 
@@ -137,7 +149,20 @@ public class MainActivity extends AppCompatActivity {
                 break;
 
             case "/":
-                left_side = buttonText;
+
+                if (operator == "")
+                    left_side = right_side;
+
+
+                else if(!equal_used && operator != "")
+                    left_side = calculate(left_side, right_side, operator);
+
+                operator = "/";
+                right_side = "";
+                currentNumber = left_side;
+
+                equal_used = false;
+
                 break;
 
             case "=" :
@@ -162,6 +187,7 @@ public class MainActivity extends AppCompatActivity {
         }
 
         output.setText(currentNumber);
+        last_input = buttonText;
 
     }
 
@@ -169,41 +195,41 @@ public class MainActivity extends AppCompatActivity {
         right_side = "0";
         left_side = "";
         operator = "";
-
     }
 
     public String calculate (String left, String right, String operand){
 
-        num1 = Integer.parseInt(left);
-        num2 = Integer.parseInt(right);
-        int cal;
+        num1 = new BigDecimal(left);
+        num2 = new BigDecimal(right);
+        BigDecimal cal;
+        BigDecimal rounded;
         String result;
 
         switch (operand){
 
             case "+":
-                cal = num1 + num2;
-                result = String.valueOf(cal);
+                cal = num1.add(num2);
                 break;
             case "-":
-                cal = num1 - num2;
-                result = String.valueOf(cal);
+                cal = num1.subtract(num2);
                 break;
             case "\u00D7":
-                cal = num1 * num2;
-                result = String.valueOf(cal);
+                cal = num1.multiply(num2);
+                break;
+            case "/":
+                cal = num1.divide(num2);
                 break;
             case "%":
-                cal = num1 % num2;
-                result = String.valueOf(cal);
+                cal = num1.remainder(num2);
                 break;
             default:
-                result = "Not avaliable!";
+                return "ERROR!";
 
         }
 
-        equal_used = false;
+        rounded = cal.stripTrailingZeros();
 
+        result = rounded.toString();
         return result;
     }
 
